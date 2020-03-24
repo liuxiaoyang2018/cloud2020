@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.*;
-
 @RestController
 @Slf4j
 public class PaymentController {
@@ -22,7 +20,6 @@ public class PaymentController {
 
     @Value("${server.port}")
     private String serverPort;
-
 
     @PostMapping(path = "/payment/create",produces = MediaType.APPLICATION_JSON_VALUE)
     public CommonResult<Payment> create(@RequestBody Payment payment){
