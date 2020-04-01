@@ -4,6 +4,8 @@ package com.atguigu.springcloud.controller;
 import com.atguigu.springcloud.entities.CommonResult;
 import com.atguigu.springcloud.entities.Payment;
 import com.atguigu.springcloud.service.PaymentService;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,6 +44,9 @@ public class PaymentController {
 
     }
     @GetMapping(path = "/payment/get/{id}")
+    @HystrixCommand(fallbackMethod = "paymentInfoTimeOutHandler",commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds",value = "3000")
+    })
     public CommonResult<Payment> getPaymentById(@PathVariable("id") Long id){
         Payment payment = paymentService.getPaymentById(id);
         log.info("****查询结果{}",payment);
@@ -52,7 +57,9 @@ public class PaymentController {
         }
 
     }
-
+    public String  paymentInfoTimeOutHandler(Integer id){
+        return "程序运行繁忙或报错,请稍后再试*****"+"当前线程: "+Thread.currentThread().getName()+id+"\t "+"orz!";
+    }
 
     @GetMapping("/payment/discovery")
     public Object discovery(){
